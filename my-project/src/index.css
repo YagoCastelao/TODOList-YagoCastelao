@@ -2,18 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
-  @apply w-full h-screen text-center flex justify-center flex-col bg-slate-400
+  @apply w-full h-screen flex justify-center items-center bg-gradient-to-b from-purple-300 to-purple-600;
+  margin: 0; }
+
+
+#app-container {
+  @apply w-[30vw] h-[60vh] bg-white rounded-lg shadow-xl border border-gray-300 p-8 flex flex-col;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 100% 24px;
+  max-width: 1200px;
 }
+
 
 h1 {
-  @apply text-2xl decoration-solid font-medium p-5
+  @apply text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-purple-700 mb-8 text-center;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
 }
 
-button {
-  @apply w-32 h-10 border-2 border-indigo-200 border-l-indigo-500 rounded-lg bg-indigo-400 underline decoration-1 text-slate-200 font-medium
+
+input {
+  @apply border border-gray-300 rounded-md p-4 w-full mb-6 text-gray-700 placeholder-gray-400;
 }
+
+input:focus {
+  @apply outline-none ring-2 ring-purple-400;
+}
+
 
 ul {
-  @apply p-5 font-semibold 
+  @apply list-none p-0 flex-1 overflow-auto;
+}
+
+
+ul li {
+  @apply flex justify-between items-center mb-6 p-4 border border-gray-300 rounded-md bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out;
+}
+
+ul li span {
+  @apply text-xl text-gray-800 font-semibold;
+}
+
+li button {
+  @apply bg-red-500 text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-600 transition-all duration-300 ease-in-out;
+}
+
+ul li.empty-message {
+  @apply text-gray-400 italic text-center;
+}
+
+footer {
+  @apply text-gray-600 font-semibold text-xl mt-6 text-center;
 }

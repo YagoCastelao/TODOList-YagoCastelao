@@ -1,13 +1,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+
+const getTodos = async () => {
+  const response = await fetch(
+    "https://playground.4geeks.com/todo/users/yago",
+    { method: "GET" }
+  );
+  const { todos } = await response.json();
+  return todos;
+};
+
+const addTodo = async (label) => {
+  fetch("https://playground.4geeks.com/todo/todos/yago", { method: "POST", headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ its_done: false, label })
+});
+const todo = await response.json();
+return todo;
+}
+
+const deleteTodo = async (id) => {
+  fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+    method: 'DELETE'
+  });
+}
+
+
 const lista = [];
 
 function App() {
   const [state, setState] = useState(lista);
   const [input, setInput] = useState("");
 
-  const agregar = () => {
+  useEffect(() => {atualizarLista()}
+  , [])
+
+  const atualizarLista = async () =>{
+    const todoList = await getTodos();
+    setState(todoList);
+  }
+
+  const agregar = async() => {
     if (input.trim() !== "") {
       setState([...state, { tarea: input }]);
       setInput("");

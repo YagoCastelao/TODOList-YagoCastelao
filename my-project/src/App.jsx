@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
 
 const getTodos = async () => {
   const response = await fetch(
@@ -12,44 +11,48 @@ const getTodos = async () => {
 };
 
 const addTodo = async (label) => {
-  fetch("https://playground.4geeks.com/todo/todos/yago", { method: "POST", headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ its_done: false, label })
-});
-const todo = await response.json();
-return todo;
-}
+  const response = await fetch(
+    "https://playground.4geeks.com/todo/todos/yago",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ its_done: false, label }),
+    }
+  );
+  const todo = await response.json();
+  return todo;
+};
 
 const deleteTodo = async (id) => {
-  fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
-    method: 'DELETE'
+  await fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+    method: "DELETE",
   });
-}
-
-
-const lista = [];
+};
 
 function App() {
-  const [state, setState] = useState(lista);
+  const [state, setState] = useState([]);
   const [input, setInput] = useState("");
 
-  useEffect(() => {atualizarLista()}
-  , [])
+  useEffect(() => {
+    atualizarLista();
+  }, []);
 
-  const atualizarLista = async () =>{
+  const atualizarLista = async () => {
     const todoList = await getTodos();
     setState(todoList);
-  }
+  };
 
-  const agregar = async() => {
+  const agregar = async () => {
     if (input.trim() !== "") {
-      setState([...state, { tarea: input }]);
+      await addTodo(input);
+      await atualizarLista();
       setInput("");
     }
   };
 
-  const eliminarItem = (listItemIndex) => {
-    const list = state.filter((_, index) => index !== listItemIndex);
-    setState(list);
+  const eliminarItem = async (id) => {
+    await deleteTodo(id);
+    await atualizarLista();
   };
 
   const handleKeyPress = (e) => {
@@ -75,20 +78,22 @@ function App() {
         />
         <ul>
           {state.length === 0 ? (
-            <li className="empty-message">Sin tareas, agrega tus tareas pendientes</li>
+            <li className="empty-message">
+              Sin tareas, agrega tus tareas pendientes
+            </li>
           ) : (
-            state.map((item, index) => (
+            state.map((item) => (
               <motion.li
-                key={index}
+                key={item.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
                 className="group"
               >
-                <span>{item.tarea}</span>
+                <span>{item.label}</span>
                 <button
-                  onClick={() => eliminarItem(index)}
+                  onClick={() => eliminarItem(item.id)}
                   className="invisible group-hover:visible"
                 >
                   x

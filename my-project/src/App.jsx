@@ -1,6 +1,26 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
+const createUserIfNotExists = async () => {
+  const userName = "yago";
+
+  const checkResponse = await fetch(
+    `https://playground.4geeks.com/todo/users/${userName}`,
+    { method: "GET" }
+  );
+
+  if (!checkResponse.ok) {
+    const createResponse = await fetch(
+      `https://playground.4geeks.com/todo/users/${userName}`,
+      { method: "POST" }
+    );
+
+    if (!createResponse.ok) {
+      throw new Error("Erro ao criar o usuário.");
+    }
+  }
+};
+
 const getTodos = async () => {
   const response = await fetch(
     "https://playground.4geeks.com/todo/users/yago",
@@ -11,16 +31,11 @@ const getTodos = async () => {
 };
 
 const addTodo = async (label) => {
-  const response = await fetch(
-    "https://playground.4geeks.com/todo/todos/yago",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ its_done: false, label }),
-    }
-  );
-  const todo = await response.json();
-  return todo;
+  await fetch("https://playground.4geeks.com/todo/todos/yago", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ its_done: false, label }),
+  });
 };
 
 const deleteTodo = async (id) => {
@@ -34,16 +49,20 @@ function App() {
   const [input, setInput] = useState("");
 
   useEffect(() => {
-    atualizarLista();
+    const initApp = async () => {
+      await createUserIfNotExists();
+      await atualizarLista();
+    };
+    initApp();
   }, []);
 
   const atualizarLista = async () => {
-    const todoList = await getTodos();
-    setState(todoList);
+    const todos = await getTodos();
+    setState(todos);
   };
 
   const agregar = async () => {
-    if (input.trim() !== "") {
+    if (input.trim()) {
       await addTodo(input);
       await atualizarLista();
       setInput("");
@@ -56,9 +75,7 @@ function App() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      agregar();
-    }
+    if (e.key === "Enter") agregar();
   };
 
   return (
